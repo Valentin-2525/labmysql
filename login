@@ -1,8 +1,8 @@
 <?php
 // Configuración de conexión a la base de datos
 $servername = "localhost"; // Cambia a la dirección de tu servidor
-$username = "user";        // Usuario de la base de datos
-$password = "password";            // Contraseña de la base de datos
+$username = "usuario_remoto";        // Usuario de la base de datos
+$password = "contraseña_segura";            // Contraseña de la base de datos
 $dbname = "base1"; // Nombre de tu base de datos
 
 // Crear la conexión
