@@ -1,78 +1,61 @@
-<?php
-// Configuración de conexión a la base de datos
-$servername = "localhost"; // Cambia a la dirección de tu servidor
-$username = "usuario_remoto";        // Usuario de la base de datos
-$password = "contraseña_segura";            // Contraseña de la base de datos
-$dbname = "base1"; // Nombre de tu base de datos
-
-// Crear la conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
-}
-
-// Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = $_POST['username'];
-    $clave = $_POST['password'];
-
-    // Validar que los campos no estén vacíos
-    if (empty($usuario) || empty($clave)) {
-        echo "Por favor, complete ambos campos.";
-    } else {
-        // Consultar la base de datos para el usuario
-        $stmt = $conn->prepare("SELECT id, password FROM usuarios WHERE username = ?");
-        $stmt->bind_param("s", $usuario);
-        $stmt->execute();
-        $stmt->store_result();
-
-        // Verificar si el usuario existe
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $hashed_password);
-            $stmt->fetch();
-
-            // Verificar la contraseña
-            if (password_verify($clave, $hashed_password)) {
-                // Inicio de sesión exitoso
-                session_start();
-                $_SESSION['user_id'] = $id;
-                echo "Inicio de sesión exitoso. ¡Bienvenido, $usuario!";
-                // Redirigir a otra página
-                header("Location: dashboard.php");
-                exit;
-            } else {
-                echo "Contraseña incorrecta.";
-            }
-        } else {
-            echo "Nombre de usuario no encontrado.";
-        }
-
-        $stmt->close();
-    }
-}
-
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Ingreso de Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .login-container h1 {
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="POST" action="">
-        <label for="username">Usuario:</label>
-        <input type="text" name="username" id="username" required>
-        <br>
-        <label for="password">Contraseña:</label>
-        <input type="password" name="password" id="password" required>
-        <br>
-        <button type="submit">Iniciar Sesión</button>
-    </form>
+    <div class="login-container">
+        <h1>Iniciar Sesión</h1>
+        <form action="login.php" method="POST">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
 </body>
 </html>
